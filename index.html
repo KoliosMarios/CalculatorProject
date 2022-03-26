@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="display">
+                <div class="display-1">0</div>
+                <div class="display-2">0</div>
+                <div class="temp-result">0</div>
+            </div>
+            <div class="all_buttons">
+                <button class="all-clear">C</button>
+                <button class="last-entity-clear">CE</button>
+                <button class="operation">%</button>
+                <button class="operation">/</button>
+                <button class="number">7</button>
+                <button class="number">8</button>
+                <button class="number">9</button>
+                <button class="operation">x</button>
+                <button class="number">4</button>
+                <button class="number">5</button>
+                <button class="number">6</button>
+                <button class="operation">-</button>
+                <button class="number">1</button>
+                <button class="number">2</button>
+                <button class="number">3</button>
+                <button class="operation">+</button>
+                <button class="number">.</button>
+                <button class="number">0</button>
+                <button class="equal">=</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const display1 = document.querySelector(".display-1");
+        const display2 = document.querySelector(".display-2");
+        const tempResult = document.querySelector(".temp-result");
+        const numbers = document.querySelectorAll(".number");
+        const operation = document.querySelectorAll(".operation");
+        const equal = document.querySelector(".equal");
+        const clearAll = document.querySelector(".all-clear");
+        const clearLast = document.querySelector(".last-entity-clear");
+        let dis1Num = "";
+        let dis2Num = "";
+        let result = "";
+        let lastOperation = "";
+        let haveDot = false;
+
+        numbers.forEach((number) => {
+          number.addEventListener("click", (e) => {
+            if (e.target.innerText === "." && !haveDot) {
+              haveDot = true;
+            } 
+            // doesn't let you put another dot in the number
+            else if (e.target.innerText === "." && haveDot) {
+              return; 
+            }
+            dis2Num += e.target.innerText;
+            display2.innerText = dis2Num;
+          });
+        });
+        operation.forEach((operation) => {
+          operation.addEventListener("click", (e) => {
+            // first check that is a number so we can have an operation
+            if (!dis2Num) return;
+            haveDot = false;
+            const operationName = e.target.innerText;
+            // check that both numbers and an operation is there so we can make the calculation
+            if (dis1Num && dis2Num && lastOperation) {
+              mathOperation();
+            } 
+            // if only the first number is there and we press the operation then it stores them both in display1 and the number in the temporary result
+            else {
+              result = parseFloat(dis2Num);
+            }
+            clearVar(operationName);
+            lastOperation = operationName;
+          });
+        });
+        // clears the part of the display that we type our numbers and operations and displays it on the upper part of the display, also displays the temporary result on the left
+        function clearVar(name = "") {
+            dis1Num += dis2Num + " " + name + " ";
+            display1.innerText = dis1Num;
+            display2.innerText = "";
+            dis2Num = "";
+            tempResult.innerText = result;
+        }
+
+        function mathOperation() {
+          if (lastOperation === "+") {
+            result = parseFloat(result) + parseFloat(dis2Num);
+          }
+          else if (lastOperation === "-") {
+            result = parseFloat(result) - parseFloat(dis2Num);
+          }
+          else if (lastOperation === "x") {
+            result = parseFloat(result) * parseFloat(dis2Num);
+          }
+          else if (lastOperation === "/") {
+            result = parseFloat(result) / parseFloat(dis2Num);
+          }
+          else if (lastOperation === "%") {
+            result = parseFloat(result) % parseFloat(dis2Num);
+          }
+        }
+
+        equal.addEventListener("click", (e)=> {
+          if(!dis1Num || !dis2Num) return;
+          haveDot = false;
+          mathOperation();
+          clearVar();
+          display2.innerText = result;
+          tempResult.innerText = "";
+          dis2Num = result;
+          dis1Num= "";
+        })
+        
+        clearAll.addEventListener("click", (e) => {
+          haveDot = false;
+          display1.innerText = "";
+          display2.innerText = "";
+          tempResult.innerText = "";
+          dis1Num = "";
+          dis2Num = "";
+          result = "";
+        })
+        
+        clearLast.addEventListener("click", (e) => {
+          haveDot = false;
+          display2.innerText = "";
+          dis2Num = "";
+        })
+
+    </script>
+</body>
+</html>
